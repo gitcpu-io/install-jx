@@ -1,5 +1,10 @@
 pod_namespace: default
 prowjob_namespace: jx
+push_gateway:
+  serve_metrics: true
+in_repo_config:
+  enabled:
+    gitcpu-io/jx-demo: true
 postsubmits:
   gitcpu-io/jx-demo: #org/repo的名字,这里需要替换
     - agent: tekton-pipeline
@@ -59,10 +64,17 @@ presubmits:
           - name: repo-revision
             value: ""
 tide:
+  target_url: http://lighthouse-jx.gitpops.net/merge/status
   queries:
     - repos:
         - gitcpu-io/jx-demo  #org/repo的名字,这里需要替换
       labels:
         - lgtm
         - approved
+      missingLabels:
+        - do-not-merge
+        - do-not-merge/hold
+        - do-not-merge/work-in-progress
+        - needs-ok-to-test
+        - needs-rebase
 

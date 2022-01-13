@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sync
+spec:
+  volumes:
+    - name: argocd-secret
+      secret:
+        secretName: $(params.argocd-secret)
+  params:
+    - name: argocd-url
+    - name: argocd-secret
+    - name: repo-image
+    - name: image-tag
+    - name: app-name
+    - name: app-revision
+      default: "HEAD"
+  steps:
+    - name: update-commit-id  #替换最新的commit id
+      image: argoproj/argocd
+      volumeMounts:
+        - name: argocd-secret
+          mountPath: /etc/secret
+      command: ["sh"]
+      args:
+        - -ce
+        - |
+          set -e
+          echo "repo image url : $(params.repo-image)"
+          echo "update commit id to : $(params.image-tag)"
+          argocd login --insecure $(params.argocd-url) --username $(/bin/cat /etc/secret/username) --password $(/bin/cat /etc/secret/password)
+          argocd app set $(params.app-name) -p image.repo=$(params.repo-image) -p image.tag=$(params.image-tag)
+          argocd app sync $(params.app-name) --revision=$(params.app-revision)
+          argocd app wait $(params.app-name) --health

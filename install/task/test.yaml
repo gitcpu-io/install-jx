@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: test
+spec:
+  workspaces:
+    - name: output
+  params:
+#    - name: DIGEST
+#    - name: URL
+#    - name: COMMIT
+  steps:
+    - name: unit-test
+#      image: golang:alpine  #使用alpine时 单元测试特意报错，正常使用latest
+      image: golang:latest
+      script: |
+        echo "Begining to go test"
+        cd $(workspaces.output.path)
+        ls -la
+        go test .

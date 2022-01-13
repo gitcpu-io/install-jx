@@ -1,0 +1,89 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: jx-demo-pipeline
+spec:
+  workspaces:
+    - name: source-workspace  # Directory where application source is located.
+    - name: cache-workspace # Directory where cache is stored
+  params:
+    - name: argocd-url
+    - name: argocd-secret
+    - name: repo-url
+    - name: repo-revision
+      type: string
+      default: "master"
+    - name: repo-image
+    - name: app-name
+    - name: app-revision
+      type: string
+      default: "HEAD"
+  tasks:
+    - name: git-clone
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: source-workspace
+      params:
+        - name: deleteExisting
+          value: "true"
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.repo-revision)
+    - name: buildpacks
+      taskRef:
+        name: buildpacks
+      runAfter:
+        - git-clone
+      workspaces:
+        - name: source
+          workspace: source-workspace
+        - name: cache
+          workspace: cache-workspace
+      params:
+        - name: BUILDER_IMAGE
+#          value: gcr.io/buildpacks/builder:v1
+#          value: paketobuildpacks/builder:base
+          value: heroku/buildpacks:20
+        - name: APP_IMAGE
+          value: $(params.repo-image):$(tasks.git-clone.results.commit)
+
+    - name: display-results
+      runAfter:
+        - buildpacks
+      taskRef:
+        name: display-results
+      workspaces:
+        - name: output
+          workspace: source-workspace
+        - name: cache
+          workspace: cache-workspace
+      params:
+        - name: DIGEST
+          value: $(tasks.buildpacks.results.APP_IMAGE_DIGEST)
+        - name: URL
+          value: $(tasks.buildpacks.results.APP_IMAGE_URL)
+        - name: COMMIT
+          value: $(tasks.git-clone.results.commit)
+
+    - name: argocd-sync
+      taskRef:
+        name: sync
+      runAfter:
+        - buildpacks
+      params:
+        - name: argocd-url
+          value: $(params.argocd-url)
+        - name: argocd-secret
+          value: $(params.argocd-secret)
+        - name: repo-image
+          value: $(params.repo-image)
+        - name: image-tag
+          value: $(tasks.git-clone.results.commit)
+        - name: app-name
+          value: $(params.app-name)
+        - name: app-revision
+          value: $(params.app-revision)
+
