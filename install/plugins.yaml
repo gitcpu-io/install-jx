@@ -10,6 +10,13 @@ config_updater:
       name: config
     plugins.yaml:
       name: plugins
+external_plugins:
+  Replace: true
+  entries:
+    - name: cd-indicators
+      endpoint: "http://cd-indicators.jx.svc.cluster.local/lighthouse/events"
+    - name: lighthouse-webui-plugin
+      endpoint: "http://lighthouse-webui-plugin.jx.svc.cluster.local/lighthouse/events"
 triggers:
   - repos:
       - gitcpu-io/jx-demo

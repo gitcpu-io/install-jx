@@ -77,7 +77,7 @@ kubectl get ing -A
 
 kubectl -n jx delete secret lighthouse-oauth-token
 
-kubectl -n jx create secret generic lighthouse-oauth-token --from-literal=oauth=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
+kubectl -n jx create secret generic lighthouse-oauth-token --from-literal=oauth=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
 
 
 # 使用Github App（如果需要）
@@ -189,108 +189,26 @@ kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=1
 kubectl -n jx scale deploy lighthouse-webhooks --replicas=1
 
 
-## 配置tekton pipeline的资源，使用正常的github和dockerhub的账号和密码
+## 配置tekton pipeline的资源
 cd install-jx/install
 
+kubectl -n jx apply -f ./pipeline
+
+kubectl -n jx apply -f ./resources
+
+kubectl -n jx apply -f ./task
 
 
 # 配置Porw的config和plugins的ConfigMap
+cd install-jx/install
 
-## 让keeper运行正常需要建立config的ConfigMap
-vi config.yaml
-```yaml
-pod_namespace: jx
-prowjob_namespace: jx
-postsubmits:
-  gitcpu-io/jx-demo: #org/repo的名字,这里需要替换
-  - agent: tekton-pipeline
-    branches:
-      - master  #确定你的仓库也是main的分支，如果是master请修改
-    context: jx-demo
-    name: jx-demo
-    pipeline_run_spec:  #这里的pipeline运行spec需要是上面创建的名字
-      serviceAccountName: app-builder
-      pipelineRef:
-        name: jx-demo-pipeline
-      workspaces:
-        - name: shared-workspace
-          persistentvolumeclaim:
-            claimName: buildpacks-source-pvc
-      resources:
-        - name: build-image
-          resourceRef:
-            name: buildpacks-app-image
-      podTemplate:
-        volumes:
-          - name: buildpacks-cache
-            persistentVolumeClaim:
-              claimName: buildpacks-cache-pvc
-tide:
-  queries:
-  - labels:
-      - lgtm
-      - approved
-    repos:
-    - gitcpu-io/jx-demo  #org/repo的名字,这里需要替换
-
-
-```
 kubectl -n jx delete cm config
 
 kubectl -n jx create cm config --from-file=config.yaml
 
 ## 让keeper运行正常需要建立plugins的ConfigMap
-vi plugins.yaml
-```yaml
-approve:
-- lgtm_acts_as_approve: false
-  repos:
-  - gitcpu-io/jx-demo  #org/repo的名字,这里需要替换
-  require_self_approval: true
-config_updater:
-  gzip: false
-  maps:
-    config.yaml:
-      name: config
-    plugins.yaml:
-      name: plugins
-    #labels.yaml:
-      #name: label-config
-triggers:
-  - repos:
-      - gitcpu-io/jx-demo
-    ignore_ok_to_test: false
-    elide_skipped_contexts: false
-plugins:
-  gitcpu-io/jx-demo:
-  - welcome
-  - config-updater
-  - approve
-  - assign
-  - help
-  - hold
-  - lgtm
-  - lifecycle
-  - size
-  - trigger
-  - wip
-  - cat
-  - yuks
-  - label
-  - milestone
-  - milestonestatus
-  - owners-label
-  - shrug
-  - sigmention
-  - skip
-  - stage
-  - override
-  - branchcleaner
-  - blockade
-welcome:
-- message_template: Welcome
+cd install-jx/install
 
-```
 kubectl -n jx delete cm plugins
 
 kubectl -n jx create cm plugins --from-file=plugins.yaml
