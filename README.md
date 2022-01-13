@@ -54,72 +54,31 @@ cd jx-git-operator/charts
 
 helm -n jx-git-operator upgrade jx-git-operator jx-git-operator
 
-## dd
+## 第四步，安装tekton-dashboard
+
+cd install-jx/install
+
+kubectl apply -f tekton-ing.yaml
+
+kubectl apply -f tekton-dashboard-release.yaml
+
+kubectl get ing -A
+
+> 配置所有域名解析
 
 
-## 安装helmfile
-wget https://github.com/roboll/helmfile/releases/download/v0.142.0/helmfile_linux_amd64
-
-mv helmfile_linux_amd64 helmfile
-
-chmod +x helmfile
-
-mv helmfile /usr/local/bin/
-
-## 下载jx-new-vault
-git clone https://github.com/gitcpu-io/jx-new-vault
-
-cd jx-new-vault
-
-###这一步必须要执行成功需要编辑下面
-helmfile sync
-
-###编辑helmfile.yaml
-vi ./helmfiles/jx/helmfile.yaml
-
-####去掉- chart: jxgh/jxboot-helmfile-resources部分
-
-####添加jxgh/lighthouse-webui-plugin
-- chart: jxgh/lighthouse-webui-plugin
-  version: 0.1.7
-  name: lighthouse-webui-plugin
-  values:
-  - ../../versionStream/charts/jxgh/lighthouse-webui-plugin/values.yaml.gotmpl
-  - jx-values.yaml
-
-###编辑jx-values.yaml
-
-vi ./helmfiles/jx/jx-values.yaml
-####jx.secrets.hmacToken部分
-这里是响应webhook的secret
-
-####jx.secrets.pipelineUser部分
-pipelineUser:
-token: 这里随意设置
-username: gitcpu-io-jx
-
-####jxRequirements.cluster部分
-添加：
-```yaml
-    azure:
-      storage:
-        storageAccountName: "vault"
-```
-
-####jxRequirements.ingress部分
-改成自己的域名
-
-ingress:
-domain: gitpops.com
+## 使用Github App
 
 ###编辑values.yaml.gotmpl
 
 vi versionStream/charts/jxgh/lighthouse/values.yaml.gotmpl
 
 添加以下部分，使用githubApp
+```yaml
 githubApp:
-enabled: true
-username: "{{.Values.jx.secrets.pipelineUser.username}}"
+  enabled: true
+  username: "{{.Values.jx.secrets.pipelineUser.username}}"
+```
 
 #如果要显示成GitHub App的账号信息，就需要生成 github-app install-access-token
 
