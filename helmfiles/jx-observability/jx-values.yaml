@@ -3,7 +3,8 @@
 # This file is created from the jx-requirements.yml and jx-global-values.yaml files.
 # For more information see: https://jenkins-x.io/v3/develop/apps/#using-requirements-in-charts
 jx:
-  imagePullSecrets: []
+  imagePullSecrets:
+  - tekton-container-registry-auth
   pipelineVariables: {}
   releaseCRD: true
   secrets:
@@ -12,35 +13,42 @@ jx:
       username: todo
     hmacToken: todo
     pipelineUser:
-      email: rubinus.chu@gmail.com
-      token: 50f7f9f130c720deab9f3dac199a1aa51d3f9dcd
-      username: gitcpu-io-jx-bot
+      email: jenkins-x@googlegroups.com
+      token: todo
+      username: jenkins-x-labs-bot
 jxRequirements:
   autoUpdate:
     enabled: false
     schedule: ""
   cluster:
+    chartRepository: http://bucketrepo.jx.svc.cluster.local/bucketrepo/charts
+    clusterName: kind
+    devEnvApprovers:
+    - todo
+    environmentGitOwner: todo
     gitKind: github
     gitName: github
     gitServer: https://github.com
-    provider: aks
-    azure:
-      storage:
-        storageAccountName: "prow"
+    provider: kubernetes
+    registry: ghcr.io
   environments:
-    - key: dev
-    - key: staging
-    - key: production
+  - key: dev
+    owner: gitcpu-io
+    repository: install-jx
+  - key: staging
+  - key: production
   ingress:
     domain: gitpops.net
     kind: ingress
-    namespaceSubDomain: -jx.
+    namespaceSubDomain: -jx-observability.
     tls:
       email: ""
       enabled: false
       production: false
-  repository: nexus
-  secretStorage: vault
+  pipelineUser:
+    username: rubinus
+  repository: bucketrepo
+  secretStorage: local
   vault: {}
   webhook: lighthouse
 jxRequirementsIngressExternalDNS:
@@ -52,4 +60,4 @@ jxRequirementsKuberhealthy:
 jxRequirementsTLSCheck:
   enabled: false
 jxRequirementsVault:
-  enabled: true
+  enabled: false

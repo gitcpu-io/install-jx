@@ -1,0 +1,15 @@
+# Source: prometheus/templates/alertmanager/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    component: "alertmanager"
+    app: prometheus
+    release: prometheus
+    chart: prometheus-13.6.0
+    heritage: Helm
+    gitops.jenkins-x.io/pipeline: 'cluster'
+  name: prometheus-alertmanager
+  annotations:
+    meta.helm.sh/release-name: 'prometheus'
+rules: []

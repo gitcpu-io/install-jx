@@ -1,0 +1,25 @@
+# Source: prometheus/charts/kube-state-metrics/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-kube-state-metrics
+  namespace: jx-observability
+  labels:
+    app.kubernetes.io/name: kube-state-metrics
+    helm.sh/chart: "kube-state-metrics-2.13.0"
+    app.kubernetes.io/instance: "prometheus"
+    app.kubernetes.io/managed-by: "Helm"
+    gitops.jenkins-x.io/pipeline: 'namespaces'
+  annotations:
+    prometheus.io/scrape: 'true'
+    meta.helm.sh/release-name: 'prometheus'
+spec:
+  type: "ClusterIP"
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: kube-state-metrics
+    app.kubernetes.io/instance: prometheus

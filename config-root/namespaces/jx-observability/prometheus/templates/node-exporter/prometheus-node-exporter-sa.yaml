@@ -1,0 +1,15 @@
+# Source: prometheus/templates/node-exporter/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    component: "node-exporter"
+    app: prometheus
+    release: prometheus
+    chart: prometheus-13.6.0
+    heritage: Helm
+    gitops.jenkins-x.io/pipeline: 'namespaces'
+  name: prometheus-node-exporter
+  namespace: jx-observability
+  annotations:
+    meta.helm.sh/release-name: 'prometheus'

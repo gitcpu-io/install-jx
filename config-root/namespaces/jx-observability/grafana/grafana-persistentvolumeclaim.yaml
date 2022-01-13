@@ -1,0 +1,23 @@
+# Source: grafana/templates/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana
+  namespace: jx-observability
+  labels:
+    helm.sh/chart: grafana-6.17.4
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/version: "8.2.2"
+    app.kubernetes.io/managed-by: Helm
+    gitops.jenkins-x.io/pipeline: 'namespaces'
+  finalizers:
+    - kubernetes.io/pvc-protection
+  annotations:
+    meta.helm.sh/release-name: 'grafana'
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "10Gi"

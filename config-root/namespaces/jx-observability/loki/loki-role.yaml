@@ -1,0 +1,19 @@
+# Source: loki/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: loki
+  namespace: jx-observability
+  labels:
+    app: loki
+    chart: loki-2.5.0
+    heritage: Helm
+    release: loki
+    gitops.jenkins-x.io/pipeline: 'namespaces'
+  annotations:
+    meta.helm.sh/release-name: 'loki'
+rules:
+  - apiGroups: ['extensions']
+    resources: ['podsecuritypolicies']
+    verbs: ['use']
+    resourceNames: [loki]

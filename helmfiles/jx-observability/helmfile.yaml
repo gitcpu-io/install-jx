@@ -1,28 +1,52 @@
+filepath: ""
 environments:
   default:
     values:
-      - jx-values.yaml
+    - jx-values.yaml
 namespace: jx-observability
 repositories:
-  - name: jxgh
-    url: https://jenkins-x-charts.github.io/repo
-  - name: grafana
-    url: https://grafana.github.io/helm-charts
-  - name: prometheus-community
-    url: https://prometheus-community.github.io/helm-charts
+- name: jxgh
+  url: https://jenkins-x-charts.github.io/repo
+- name: grafana
+  url: https://grafana.github.io/helm-charts
+- name: prometheus-community
+  url: https://prometheus-community.github.io/helm-charts
 releases:
-  - chart: jxgh/grafana-dashboard
-    name: grafana-dashboard
-  - chart: grafana/loki
-    name: loki
-  - chart: grafana/promtail
-    name: promtail
-  - chart: grafana/tempo
-    name: tempo
-  - chart: grafana/grafana
-    name: grafana
-    values:
-      - ../../versionStream/charts/grafana/grafana/values.yaml.gotmpl
-      - jx-values.yaml
-  - chart: prometheus-community/prometheus
-    name: prometheus
+- chart: jxgh/grafana-dashboard
+  version: 0.2.2
+  name: grafana-dashboard
+  values:
+  - ../../versionStream/charts/jxgh/grafana-dashboard/values.yaml.gotmpl
+  - jx-values.yaml
+- chart: grafana/loki
+  version: 2.5.0
+  name: loki
+  values:
+  - ../../versionStream/charts/grafana/loki/values.yaml
+  - jx-values.yaml
+- chart: grafana/promtail
+  version: 3.5.0
+  name: promtail
+  values:
+  - ../../versionStream/charts/grafana/promtail/values.yaml
+  - jx-values.yaml
+- chart: grafana/tempo
+  version: 0.6.8
+  name: tempo
+  values:
+  - ../../versionStream/charts/grafana/tempo/values.yaml
+  - jx-values.yaml
+- chart: grafana/grafana
+  version: 6.17.4
+  name: grafana
+  values:
+  - ../../versionStream/charts/grafana/grafana/values.yaml.gotmpl
+  - jx-values.yaml
+- chart: prometheus-community/prometheus
+  version: 13.6.0
+  name: prometheus
+  values:
+  - ../../versionStream/charts/prometheus-community/prometheus/values.yaml
+  - jx-values.yaml
+templates: {}
+renderedvalues: {}

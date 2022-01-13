@@ -1,0 +1,25 @@
+# Source: loki/templates/service-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-headless
+  namespace: jx-observability
+  labels:
+    app: loki
+    chart: loki-2.5.0
+    release: loki
+    heritage: Helm
+    variant: headless
+    gitops.jenkins-x.io/pipeline: 'namespaces'
+  annotations:
+    meta.helm.sh/release-name: 'loki'
+spec:
+  clusterIP: None
+  ports:
+    - port: 3100
+      protocol: TCP
+      name: http-metrics
+      targetPort: http-metrics
+  selector:
+    app: loki
+    release: loki
