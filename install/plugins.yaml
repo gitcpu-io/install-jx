@@ -1,0 +1,44 @@
+approve:
+  - lgtm_acts_as_approve: false
+    repos:
+      - gitcpu-io/jx-demo
+    require_self_approval: true
+config_updater:
+  gzip: false
+  maps:
+    config.yaml:
+      name: config
+    plugins.yaml:
+      name: plugins
+triggers:
+  - repos:
+      - gitcpu-io/jx-demo
+    ignore_ok_to_test: false
+    elide_skipped_contexts: false
+plugins:
+  gitcpu-io/jx-demo:
+    - config-updater
+    - approve
+    - assign
+    - help
+    - hold
+    - lgtm
+    - lifecycle
+    - size
+    - trigger
+    - wip
+    - cat
+    - yuks
+    - label
+    - milestone
+    - milestonestatus
+    - owners-label
+    - shrug
+    - sigmention
+    - skip
+    - stage
+    - override
+    - branchcleaner
+    - blockade
+welcome:
+  - message_template: Welcome
