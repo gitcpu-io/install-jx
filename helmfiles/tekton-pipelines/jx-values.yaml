@@ -33,16 +33,20 @@ jxRequirements:
     registry: ghcr.io
   environments:
   - key: dev
+    owner: gitcpu-io
+    repository: install-jx
   - key: staging
   - key: production
   ingress:
-    domain: change.me
+    domain: gitpops.net
     kind: ingress
     namespaceSubDomain: -tekton-pipelines.
     tls:
       email: ""
       enabled: false
       production: false
+  pipelineUser:
+    username: rubinus
   repository: bucketrepo
   secretStorage: local
   vault: {}
