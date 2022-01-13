@@ -150,6 +150,22 @@ kubectl -n jx delete -f label_sync_cron_job.yaml
 
 kubectl -n jx apply -f label_sync_cron_job.yaml
 
+## 第九步，安装argocd
+kubectl create namespace argocd
+
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+> 备用
+
+cd install-jx/install
+
+kubectl -n argocd apply -f argocd-install.yaml
+
+> 创建argocd ingress
+
+kubectl -n argocd apply -f argocd-ing.yaml
+
+> 设置域名解析
 
 
 # 使用Github App（如果需要）
