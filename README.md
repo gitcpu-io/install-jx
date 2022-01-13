@@ -1,6 +1,3 @@
-# Jenkins X 3.x GitOps Repository for AKS and Azure
-
-
 # install jenkins-x
 
 ## 第一步，准备安装仓库
@@ -8,13 +5,16 @@ git clone https://github.com/gitcpu-io/install-jx.git
 
 ### 设置访问域名
 cd install-jx
+
 vi jx-requirements.yml
 ```yaml
   ingress:
     domain: "gitpops.net"
 ```
 git add .
+
 git commit -am "change domain"
+
 git push
 
 ## 第二步，准备oauth personal access token
@@ -118,14 +118,14 @@ kubectl -n jx apply -f ./task
 
 ## 第七步，配置Prow
 
-### 的config和plugins的ConfigMap
+### config的ConfigMap
 cd install-jx/install
 
 kubectl -n jx delete cm config
 
 kubectl -n jx create cm config --from-file=config.yaml
 
-### 让keeper运行正常需要建立plugins的ConfigMap
+### plugins的ConfigMap
 cd install-jx/install
 
 kubectl -n jx delete cm plugins
@@ -167,6 +167,25 @@ kubectl -n argocd apply -f argocd-ing.yaml
 
 > 设置域名解析
 
+> 如果argocd https访问不了，需要改动deploy，添加--insecure
+
+kubectl -n argocd edit deploy argocd-server
+```yaml
+      - command:
+        - argocd-server
+        - --insecure
+```
+
+> argocd的初始密码
+
+kubectl -n argocd get secret argocd-initial-admin-secret -oyaml
+
+echo xxxxxxx |base64 -d
+
+登录后修改密码
+
+kubectl -n argocd apply -f ./resources/secret.yaml
+
 
 # 使用Github App（如果需要）
 
@@ -187,7 +206,7 @@ githubApp:
 
 ## 准备jwt来访问api.github.com
 
-> 其原理就是通过github.com上下载的GitHub App的private-key.pem
+> 其原理就是通过github.com上下载的GitHub App的private_key.pem
 > 从.pem中提取出私匙的文本信息
 > 连同GitHub App id 及过期时间，一起通过jwt.encode加密后生成的jwt token
 
@@ -249,6 +268,7 @@ curl \
 https://api.github.com/app/installations/21510467/access_tokens \
 -d '{"repositories":["jx-demo"]}'
 
+这里的jx-demo需要换成你的仓库
 ```
 
 比如生成的 install access token = ghs_GESyuBbmGYPSIc0BvAsIKR5KhpjJIO1TIhoE
@@ -257,6 +277,43 @@ https://api.github.com/app/installations/21510467/access_tokens \
 kubectl -n jx delete secret tide-githubapp-tokens
 
 kubectl -n jx create secret generic tide-githubapp-tokens --from-literal=username=gitcpu-io-jx-bot --from-literal=gitcpu-io-jx-bot=https://github.com/gitcpu-io=ghs_GESyuBbmGYPSIc0BvAsIKR5KhpjJIO1TIhoE
+
+```yaml
+        ####进程启动参数flag添加
+        - name: GITHUB_APP_SECRET_DIR
+          value: /secrets/githubapp/tokens
+
+        ####容器参数添加volumeMounts
+        volumeMounts:
+          - mountPath: /secrets/githubapp/tokens
+            name: githubapp-tokens
+            readOnly: true
+
+      ####Pod挂载volumes
+      volumes:
+      - name: githubapp-tokens
+        secret:
+          defaultMode: 420
+          secretName: tide-githubapp-tokens
+```
+
+### 重启
+kubectl -n jx scale deploy lighthouse-keeper --replicas=0
+
+kubectl -n jx scale deploy lighthouse-foghorn --replicas=0
+
+kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=0
+
+kubectl -n jx scale deploy lighthouse-webhooks --replicas=0
+
+###重启
+kubectl -n jx scale deploy lighthouse-keeper --replicas=1
+
+kubectl -n jx scale deploy lighthouse-foghorn --replicas=1
+
+kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=1
+
+kubectl -n jx scale deploy lighthouse-webhooks --replicas=1
 
 
 #Github
