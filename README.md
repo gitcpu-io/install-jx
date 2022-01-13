@@ -77,7 +77,7 @@ kubectl get ing -A
 
 kubectl -n jx delete secret lighthouse-oauth-token
 
-kubectl -n jx create secret generic lighthouse-oauth-token --from-literal=oauth=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
+kubectl -n jx create secret generic lighthouse-oauth-token --from-literal=oauth=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
 
 
 # 使用Github App（如果需要）
