@@ -60,6 +60,7 @@ cd jx-git-operator/charts
 
 helm -n jx-git-operator upgrade --set url=https://github.com/gitcpu-io/install-jx.git --set username=rubinus --set password=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  jx-git-operator jx-git-operator
 
+
 ## 第四步，安装tekton-dashboard
 
 cd install-jx/install
@@ -75,12 +76,85 @@ kubectl get ing -A
 
 ## 第五步，如果Oauth App token过期，可以使用Personal access token来创建
 
+> 安装成功，需要删除 jx-git-operator，使用自己的仓库和prow的配置
+
+kubectl delete ns jx-git-operator
+
+> (可选)准备新的personal access token，来生成lighthouse-oauth-token
+
 kubectl -n jx delete secret lighthouse-oauth-token
 
 kubectl -n jx create secret generic lighthouse-oauth-token --from-literal=oauth=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
 
 
+### 重启
+kubectl -n jx scale deploy lighthouse-keeper --replicas=0
+
+kubectl -n jx scale deploy lighthouse-foghorn --replicas=0
+
+kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=0
+
+kubectl -n jx scale deploy lighthouse-webhooks --replicas=0
+
+###重启
+kubectl -n jx scale deploy lighthouse-keeper --replicas=1
+
+kubectl -n jx scale deploy lighthouse-foghorn --replicas=1
+
+kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=1
+
+kubectl -n jx scale deploy lighthouse-webhooks --replicas=1
+
+
+## 第六步，配置tekton pipeline的资源，作为presubmits和postsubmits
+cd install-jx/install
+
+kubectl -n jx apply -f ./pipeline
+
+kubectl -n jx apply -f ./resources
+
+kubectl -n jx apply -f ./task
+
+
+## 第七步，配置Prow
+
+### 的config和plugins的ConfigMap
+cd install-jx/install
+
+kubectl -n jx delete cm config
+
+kubectl -n jx create cm config --from-file=config.yaml
+
+### 让keeper运行正常需要建立plugins的ConfigMap
+cd install-jx/install
+
+kubectl -n jx delete cm plugins
+
+kubectl -n jx create cm plugins --from-file=plugins.yaml
+
+##第八步 搞定显示color label
+
+cd install-jx/install
+
+> 创建label-config的ConfigMap
+
+kubectl -n jx apply -f labels-cm.yaml
+
+> 运行job
+
+kubectl -n jx delete -f label_sync_job.yaml
+
+kubectl -n jx apply -f label_sync_job.yaml
+
+kubectl -n jx delete -f label_sync_cron_job.yaml
+
+kubectl -n jx apply -f label_sync_cron_job.yaml
+
+
+
 # 使用Github App（如果需要）
+
+## 如果要显示成GitHub App的账号信息，就需要生成 github-app install-access-token
 
 ## 编辑lighthouse的values.yaml.gotmpl
 
@@ -94,8 +168,6 @@ githubApp:
   enabled: true
   username: "{{.Values.jx.secrets.pipelineUser.username}}"
 ```
-
-## 如果要显示成GitHub App的账号信息，就需要生成 github-app install-access-token
 
 ## 准备jwt来访问api.github.com
 
@@ -169,64 +241,6 @@ https://api.github.com/app/installations/21510467/access_tokens \
 kubectl -n jx delete secret tide-githubapp-tokens
 
 kubectl -n jx create secret generic tide-githubapp-tokens --from-literal=username=gitcpu-io-jx-bot --from-literal=gitcpu-io-jx-bot=https://github.com/gitcpu-io=ghs_GESyuBbmGYPSIc0BvAsIKR5KhpjJIO1TIhoE
-
-### 重启
-kubectl -n jx scale deploy lighthouse-keeper --replicas=0
-
-kubectl -n jx scale deploy lighthouse-foghorn --replicas=0
-
-kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=0
-
-kubectl -n jx scale deploy lighthouse-webhooks --replicas=0
-
-###重启
-kubectl -n jx scale deploy lighthouse-keeper --replicas=1
-
-kubectl -n jx scale deploy lighthouse-foghorn --replicas=1
-
-kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=1
-
-kubectl -n jx scale deploy lighthouse-webhooks --replicas=1
-
-
-## 配置tekton pipeline的资源
-cd install-jx/install
-
-kubectl -n jx apply -f ./pipeline
-
-kubectl -n jx apply -f ./resources
-
-kubectl -n jx apply -f ./task
-
-
-# 配置Porw的config和plugins的ConfigMap
-cd install-jx/install
-
-kubectl -n jx delete cm config
-
-kubectl -n jx create cm config --from-file=config.yaml
-
-## 让keeper运行正常需要建立plugins的ConfigMap
-cd install-jx/install
-
-kubectl -n jx delete cm plugins
-
-kubectl -n jx create cm plugins --from-file=plugins.yaml
-
-## 显示color label
-> 创建label-config的ConfigMap
-
-kubectl -n jx apply -f labels-cm.yaml
-
-> 运行job
-
-kubectl -n jx delete -f label_sync_job.yaml
-
-kubectl -n jx apply -f label_sync_job.yaml
-
-kubectl -n jx delete -f label_sync_cron_job.yaml
-
-kubectl -n jx apply -f label_sync_cron_job.yaml
 
 
 #Github
