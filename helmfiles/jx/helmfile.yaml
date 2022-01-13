@@ -64,7 +64,7 @@ releases:
   version: 0.1.7
   name: lighthouse-webui-plugin
   values:
-    - ../../versionStream/charts/jxgh/lighthouse-webui-plugin/values.yaml.gotmpl
-    - jx-values.yaml
+  - ../../versionStream/charts/jxgh/lighthouse-webui-plugin/values.yaml.gotmpl
+  - jx-values.yaml
 templates: {}
 renderedvalues: {}

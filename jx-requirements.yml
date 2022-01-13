@@ -22,8 +22,8 @@ spec:
   - key: staging
   - key: production
   ingress:
-    domain: "gitpops.net"
-    externalDNS: false
+    domain: gitpops.net
+    kind: ingress
     namespaceSubDomain: -jx.
     tls:
       email: ""
