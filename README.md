@@ -22,7 +22,7 @@ git push
 
 https://github.com/settings/tokens/new?scopes=repo,read:user,read:org,user:email,admin:repo_hook,write:packages,read:packages,write:discussion,workflow
 
-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
+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
 
 ## 第三步，通过安装jx-git-operator来安装jenkins-x
 
@@ -36,13 +36,23 @@ git clone https://github.com/jenkins-x/jx-git-operator.git
 
 cd jx-git-operator/charts
 
-helm -n jx-git-operator install --set url=https://github.com/gitcpu-io/install-jx.git --set username=rubinus --set password=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 jx-git-operator jx-git-operator
+helm -n jx-git-operator install --set url=https://github.com/gitcpu-io/install-jx.git --set username=rubinus --set password=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 jx-git-operator jx-git-operator
 
 > 检查是否安装成功
 
 kubectl -n jx-git-operator get po
 
 kubectl -n jx get po
+
+kubectl -n jx get po
+
+> 检查helm安装，如果install-jx有变动，可以升级
+
+helm -n jx-git-operator list
+
+cd jx-git-operator/charts
+
+helm -n jx-git-operator upgrade jx-git-operator jx-git-operator
 
 ## dd
 

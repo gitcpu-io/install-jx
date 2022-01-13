@@ -5,7 +5,7 @@ metadata:
   namespace: tekton-pipelines
 spec:
   rules:
-    - host: tekton-jx.gitpops.com
+    - host: tekton-jx.gitpops.net
       http:
         paths:
           - pathType: ImplementationSpecific
