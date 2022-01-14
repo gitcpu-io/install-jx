@@ -56,7 +56,7 @@ presubmits:
       trigger: (?m)^/test( all| this),?(s+|$)
       pipeline_run_spec: #这里的pipeline运行spec需要是上面创建的名字
         pipelineRef:
-          name: jx-demo-pre-pipeline
+          name: unit-test-pipeline
         workspaces:
           - name: source-workspace
             subPath: source

@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: jx-demo-pre-pipeline
+  name: unit-test-pipeline
 spec:
   workspaces:
     - name: source-workspace  # Directory where application source is located.
@@ -27,6 +27,8 @@ spec:
     - name: test
       taskRef:
         name: test
+      runAfter:
+        - git-clone
       workspaces:
         - name: output
           workspace: source-workspace
