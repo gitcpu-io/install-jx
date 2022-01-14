@@ -7,17 +7,19 @@ spec:
     - name: source-workspace  # Directory where application source is located.
     - name: cache-workspace # Directory where cache is stored
   params:
-    - name: argocd-url
-    - name: argocd-secret
+#    - name: argocd-url
+#    - name: argocd-secret
     - name: repo-url
     - name: repo-revision
       type: string
       default: "master"
     - name: repo-image
-    - name: app-name
-    - name: app-revision
-      type: string
-      default: "HEAD"
+#    - name: app-name
+#    - name: app-revision
+#      type: string
+#      default: "HEAD"
+    - name: repo-infra
+    - name: deploy-path
   tasks:
     - name: git-clone
       taskRef:
@@ -68,22 +70,34 @@ spec:
         - name: COMMIT
           value: $(tasks.git-clone.results.commit)
 
-    - name: argocd-sync
+#    - name: argocd-sync
+#      taskRef:
+#        name: sync
+#      runAfter:
+#        - buildpacks
+#      params:
+#        - name: argocd-url
+#          value: $(params.argocd-url)
+#        - name: argocd-secret
+#          value: $(params.argocd-secret)
+#        - name: repo-image
+#          value: $(params.repo-image)
+#        - name: image-tag
+#          value: $(tasks.git-clone.results.commit)
+#        - name: app-name
+#          value: $(params.app-name)
+#        - name: app-revision
+#          value: $(params.app-revision)
+
+    - name: commit-infra
       taskRef:
-        name: sync
+        name: commit-infra
       runAfter:
         - buildpacks
       params:
-        - name: argocd-url
-          value: $(params.argocd-url)
-        - name: argocd-secret
-          value: $(params.argocd-secret)
-        - name: repo-image
-          value: $(params.repo-image)
-        - name: image-tag
+        - name: commit-id
           value: $(tasks.git-clone.results.commit)
-        - name: app-name
-          value: $(params.app-name)
-        - name: app-revision
-          value: $(params.app-revision)
-
+        - name: repo-infra
+          value: $(params.repo-infra)
+        - name: deploy-path
+          value: $(params.deploy-path)
