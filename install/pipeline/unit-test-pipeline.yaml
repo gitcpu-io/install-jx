@@ -24,9 +24,9 @@ spec:
           value: $(params.repo-url)
         - name: revision
           value: $(params.repo-revision)
-    - name: test
+    - name: unit-test
       taskRef:
-        name: test
+        name: unit-test
       runAfter:
         - git-clone
       workspaces:

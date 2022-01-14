@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: test
+  name: unit-test
 spec:
   workspaces:
     - name: output
@@ -10,7 +10,7 @@ spec:
 #    - name: URL
 #    - name: COMMIT
   steps:
-    - name: unit-test
+    - name: go-test
 #      image: golang:alpine  #使用alpine时 单元测试特意报错，正常使用latest
       image: golang:latest
       script: |
