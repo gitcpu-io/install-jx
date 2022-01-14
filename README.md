@@ -63,7 +63,11 @@ helm -n jx-git-operator upgrade --set url=https://github.com/gitcpu-io/install-j
 
 ## 第四步，安装tekton-dashboard
 
+> 如果访问不到镜像，可以执行下面的脚本用来替换
+
 cd install-jx/install
+
+./load_images.sh
 
 kubectl apply -f tekton-ing.yaml
 
@@ -118,6 +122,10 @@ kubectl -n jx apply -f ./task
 
 ## 第七步，配置Prow
 
+> 以jx-demo为例，作为chatops的代码仓库
+
+https://github.com/gitcpu-io/jx-demo.git
+
 ### config的ConfigMap
 cd install-jx/install
 
@@ -167,24 +175,21 @@ kubectl -n argocd apply -f argocd-ing.yaml
 
 > 设置域名解析
 
-> 如果argocd https访问不了，需要改动deploy，添加--insecure
-
-kubectl -n argocd edit deploy argocd-server
-```yaml
-      - command:
-        - argocd-server
-        - --insecure
-```
-
 > argocd的初始密码
 
 kubectl -n argocd get secret argocd-initial-admin-secret -oyaml
 
 echo xxxxxxx |base64 -d
 
-登录后修改密码
+> 登录后修改密码，另外创建argocd-oauth的secret给pipeline使用
 
 kubectl -n argocd apply -f ./resources/secret.yaml
+
+### 登录argocd后，创建app
+
+> 通过jx-demo-infra这个配置仓库
+
+https://github.com/gitcpu-io/jx-demo-infra.git
 
 
 # 使用Github App（如果需要）
