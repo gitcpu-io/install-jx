@@ -115,6 +115,8 @@ cd install-jx/install
 
 kubectl -n jx apply -f ./pipeline
 
+> 在这一步，一定要去修改为正确的secret中的账号密码（dockerhub、github）
+
 kubectl -n jx apply -f ./resources
 
 kubectl -n jx apply -f ./task

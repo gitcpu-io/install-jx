@@ -7,19 +7,21 @@ spec:
     - name: source-workspace  # Directory where application source is located.
     - name: cache-workspace # Directory where cache is stored
   params:
-#    - name: argocd-url
-#    - name: argocd-secret
     - name: repo-url
     - name: repo-revision
       type: string
       default: "master"
     - name: repo-image
+    - name: repo-infra
+    - name: deploy-path
+
+#    - name: argocd-url
+#    - name: argocd-secret
 #    - name: app-name
 #    - name: app-revision
 #      type: string
 #      default: "HEAD"
-    - name: repo-infra
-    - name: deploy-path
+
   tasks:
     - name: git-clone
       taskRef:
@@ -46,8 +48,6 @@ spec:
           workspace: cache-workspace
       params:
         - name: BUILDER_IMAGE
-#          value: gcr.io/buildpacks/builder:v1
-#          value: paketobuildpacks/builder:base
           value: heroku/buildpacks:20
         - name: APP_IMAGE
           value: $(params.repo-image):$(tasks.git-clone.results.commit)
