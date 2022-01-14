@@ -234,11 +234,13 @@ ruby private_key.rb
 1.选择RS256，HEADER:ALGORITHM部分自动出现，不用动
 
 2.PAYLOAD:DATA 需要注意，用iss表示GitHub App的id，exp值需要最大10分钟的过期时间
+```json
 {
-"exp": 1640316991,  ## JWT expiration time (10 minute maximum)
-"iss": "158861", ##这里是GitHub App id
-"iat": 1516239022
+  "exp": 1640316991,
+  "iss": "158861",
+  "iat": 1516239022
 }
+```
 
 3.VERIFY SIGNATURE部分在 private key部分，放入之前生成的private-key
 
@@ -260,7 +262,7 @@ curl \
 https://api.github.com/app/installations
 
 "id": 21510467
-
+这个id是Github app的ID 需要找到你自己的
 ```
 
 ### 通过安装 id 来查询对应的仓库：install access token
@@ -273,7 +275,8 @@ curl \
 https://api.github.com/app/installations/21510467/access_tokens \
 -d '{"repositories":["jx-demo"]}'
 
-这里的jx-demo需要换成你的仓库
+21510467这个id是Github app的ID 需要用你自己上一步查询到的
+这里的jx-demo需要换成你的仓库 也就是代码仓库
 ```
 
 比如生成的 install access token = ghs_GESyuBbmGYPSIc0BvAsIKR5KhpjJIO1TIhoE
@@ -282,6 +285,8 @@ https://api.github.com/app/installations/21510467/access_tokens \
 kubectl -n jx delete secret tide-githubapp-tokens
 
 kubectl -n jx create secret generic tide-githubapp-tokens --from-literal=username=gitcpu-io-jx-bot --from-literal=gitcpu-io-jx-bot=https://github.com/gitcpu-io=ghs_GESyuBbmGYPSIc0BvAsIKR5KhpjJIO1TIhoE
+
+> 如果keeper、foghorn、webhooks的deployment没有下面部分，可以添加
 
 ```yaml
         ####进程启动参数flag添加
@@ -429,6 +434,7 @@ https://api.github.com/repos/$REPO/issues/comments/1000977157 \
 
 # Oauth App
 > OAuth token对GitHub API进行身份验证，并包括 personal access token功能
+
 > oauth token过期时间8小时，刷新token是6个月
 
 > 设置变量
@@ -524,12 +530,14 @@ curl \
 ```
 
 # GitHub App
-GitHub App id 一般就是6位数字
-GitHub App pem (private key) 需要保存到文件目录中
+### GitHub App id 一般就是6位数字
+
+### GitHub App pem (private key) 需要保存到文件目录中
 
 ## GitHub App通过install与其它repo勾搭上
 
 > install access token：是GitHub App访问已经install过的任何repo，调用github api请求对repo操作时，
+
 > 需要用经过身份验证的token，这个token会在一小时后过期，需要定期提前更新
 
 ## install-access-token生成步骤：
