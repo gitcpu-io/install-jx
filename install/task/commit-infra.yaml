@@ -18,7 +18,7 @@ spec:
     - name: git-name
       default: Tekton Pipeline
   steps:
-    - name: commit-infra
+    - name: update-yaml-push
       image: $(params.commit-image)
       env:
         - name: GIT_USERNAME
