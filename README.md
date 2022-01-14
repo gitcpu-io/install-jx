@@ -1,4 +1,4 @@
-# install jenkins-x
+# install jenkins-x 十步曲
 
 ## 第一步，准备安装仓库
 git clone https://github.com/gitcpu-io/install-jx.git
@@ -100,7 +100,7 @@ kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=0
 
 kubectl -n jx scale deploy lighthouse-webhooks --replicas=0
 
-###重启
+### 重启
 kubectl -n jx scale deploy lighthouse-keeper --replicas=1
 
 kubectl -n jx scale deploy lighthouse-foghorn --replicas=1
@@ -140,7 +140,7 @@ kubectl -n jx delete cm plugins
 
 kubectl -n jx create cm plugins --from-file=plugins.yaml
 
-##第八步 搞定显示color label
+## 第八步 搞定显示color label
 
 cd install-jx/install
 
@@ -192,7 +192,7 @@ kubectl -n argocd apply -f ./resources/secret.yaml
 https://github.com/gitcpu-io/jx-demo-infra.git
 
 
-# 使用Github App（如果需要）
+# 第十步，使用Github App（如果需要）
 
 ## 如果要显示成GitHub App的账号信息，就需要生成 github-app install-access-token
 
@@ -311,7 +311,7 @@ kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=0
 
 kubectl -n jx scale deploy lighthouse-webhooks --replicas=0
 
-###重启
+### 重启
 kubectl -n jx scale deploy lighthouse-keeper --replicas=1
 
 kubectl -n jx scale deploy lighthouse-foghorn --replicas=1
@@ -321,9 +321,9 @@ kubectl -n jx scale deploy lighthouse-tekton-controller --replicas=1
 kubectl -n jx scale deploy lighthouse-webhooks --replicas=1
 
 
-#Github
+# Github
 
-##关于token
+## 关于token
 - Personal access token 主要用于非生产环境，git push
 - Oauth APP Token 次之，包括Personal token，可以在用作cli上提交代码git push
 - Github APP 的 install access token功能最大，包括oauth token，但不能用作git push
@@ -332,14 +332,14 @@ kubectl -n jx scale deploy lighthouse-webhooks --replicas=1
 - 任何用户创建的issue和pr，可以被其它用户来修改，前提是token有相应的权限：合作者且Write权限
 
 
-##关于PR
+## 关于PR
 - 任何一个PR都是一个issue，但不是每一个issue都是一个PR
 - A提交的PR，可以由B其它人来修改PR，合作者且Write权限
 - PR不要太大，提交小的commit
 - 如果PR没有reviewer，可以通过/assign @reviewer
 - PR的commit第一个字母大写，标题不要超过50个字符；内容每行不超过72个字符
 
-##关于文档错误
+## 关于文档错误
 - https://docs.github.com/cn/rest/reference/pulls#list-review-comments-on-a-pull-request
 
 > 错误 - > 查询PR的comment
