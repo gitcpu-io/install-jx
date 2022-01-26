@@ -45,9 +45,10 @@ spec:
           git clone --branch master --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@$(params.repo-infra) repo
           cd "repo/$(params.deploy-path)"
           ls -l
-          echo old value:
+          echo old value and set to image.oldtag:
           cat values.yaml | yq r - 'image.tag'
-          echo replacing with new value:
+          yq w -i values.yaml 'image.oldtag' $(/bin/cat values.yaml | yq r - 'image.tag')
+          echo replacing with new value
           yq w -i values.yaml 'image.tag' "$(params.commit-id)"
           echo verifying new value
           yq r values.yaml image.tag

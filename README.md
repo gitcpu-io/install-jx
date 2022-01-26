@@ -121,6 +121,10 @@ kubectl -n jx apply -f ./resources
 
 kubectl -n jx apply -f ./task
 
+> 安装nfs client，nfs-client.yaml中的配置要改成nfs server的相应信息(如果需要)
+
+kubectl -n jx apply -f ./storage
+
 
 ## 第七步，配置Prow
 
