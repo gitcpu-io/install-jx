@@ -1,4 +1,4 @@
-# install jenkins-x 十步曲
+# install jenkins-x for github 十步曲
 
 ## 第一步，准备安装仓库
 git clone https://github.com/gitcpu-io/install-jx.git
