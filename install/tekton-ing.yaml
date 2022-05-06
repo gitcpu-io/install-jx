@@ -3,6 +3,11 @@ kind: Ingress
 metadata:
   name: tekton-dashboard
   namespace: tekton-pipelines
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required - Tekton Pipeline Dashboard
+    nginx.ingress.kubernetes.io/auth-secret: tekton-basic-auth
+    nginx.ingress.kubernetes.io/auth-type: basic
 spec:
   rules:
     - host: tekton-jx.gitpops.net

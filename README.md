@@ -69,6 +69,15 @@ cd install-jx/install
 
 ./load_images.sh
 
+### 生成basic auth for tekton dashboard
+yum install -y httpd
+
+htpasswd -c auth admin
+输入密码
+
+kubectl -n tekton-pipelines create secret generic tekton-basic-auth --from-file=auth
+
+
 kubectl apply -f tekton-ing.yaml
 
 kubectl apply -f tekton-dashboard-release.yaml
